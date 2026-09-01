@@ -1,2 +1,2 @@
-# spook-jam
-spook jam 2026
+# Game jam
+Game Jam 2026
