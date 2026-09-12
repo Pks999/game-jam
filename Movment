@@ -1,0 +1,42 @@
+extends CharacterBody2D
+
+@onready var camera = $"../Camera2D"
+
+@onready var size = camera.get_viewport_rect().size / camera.zoom
+@onready var center = camera.get_screen_center_position()
+
+@onready var top_left = center - size / 2
+@onready var bottom_right = center + size / 2
+
+
+
+var speed = 700
+
+	
+func _physics_process(delta: float) -> void:
+	var dictrion = Input.get_vector("Left", "Right", "Up", "Down")
+	velocity = dictrion * speed
+	
+	move_and_slide()
+	if Input.is_action_pressed("Dig"):
+		var local_position = position - top_left
+		var quarter_width = abs(top_left.x - bottom_right.x)/4
+		var our_x_quarter = floor((position.x - top_left.x) / quarter_width)
+		var quarter_height = abs(top_left.y - bottom_right.y)/4
+		var our_y_quarter = floor((position.y - top_left.y) / quarter_height)
+		
+		var our_bitmap_position = int(our_x_quarter * 4 + our_y_quarter)
+		print(our_bitmap_position)
+		if our_bitmap_position < 16 and our_bitmap_position > 0:
+			if Global.dig_map[our_bitmap_position]:
+				print("diggin")
+				$Sprite2D.scale *= 1.1
+				speed *= 1.1
+				Global.dig_map[our_bitmap_position] = !Global.dig_map[our_bitmap_position]
+				while true:	
+					var i = randi_range(0,16)
+					if Global.dig_map[i]:
+						pass
+					else:
+						Global.dig_map[i] = true
+						break
